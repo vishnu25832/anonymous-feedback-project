@@ -14,7 +14,10 @@ const app = express();
 // MIDDLEWARE
 // ==============================
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000"
+    origin: [
+        "http://localhost:3000",
+        "https://anonymous-feedback-client.onrender.com"
+    ]
 }));
 
 
