@@ -1,23 +1,39 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useApi } from "../hooks/useApi";
 
 export default function SendFeedback() {
+
     const { id } = useParams();
+    const api = useApi();
+
     const [text, setText] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const sendMessage = async () => {
-        await fetch("http://localhost:5000/message", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+
+        if (!text.trim()) {
+            alert("Please write some feedback");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            await api.post("/message", {
                 linkId: id,
                 text
-            })
-        });
+            });
 
-        alert("Feedback Sent Successfully!");
+            setText("");
+            alert("Feedback Sent Successfully!");
+
+        } catch (err) {
+            console.log(err);
+            alert("Failed to send feedback");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -26,12 +42,15 @@ export default function SendFeedback() {
 
             <textarea
                 placeholder="Type your feedback..."
+                value={text}
                 onChange={(e) => setText(e.target.value)}
             />
 
             <br /><br />
 
-            <button onClick={sendMessage}>Send Feedback</button>
+            <button onClick={sendMessage} disabled={loading}>
+                {loading ? "Sending..." : "Send Feedback"}
+            </button>
         </div>
     );
 }
