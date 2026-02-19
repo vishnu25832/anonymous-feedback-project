@@ -1,9 +1,10 @@
+const BASE_URL =
+    process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export const useApi = () => {
 
-    const base = "http://localhost:5000";
-
     const post = async (url, body) => {
-        const res = await fetch(base + url, {
+        const res = await fetch(BASE_URL + url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -15,20 +16,18 @@ export const useApi = () => {
     };
 
     const get = async (url) => {
-        const res = await fetch(base + url);
+        const res = await fetch(BASE_URL + url);
         return res.json();
     };
 
-    // ⭐ ADD THIS DELETE METHOD
     const del = async (url) => {
-        const res = await fetch(base + url, {
+        const res = await fetch(BASE_URL + url, {
             method: "DELETE"
         });
-
         return res.json();
     };
 
-    // ⭐ RETURN del ALSO
     return { post, get, del };
 };
+
 
