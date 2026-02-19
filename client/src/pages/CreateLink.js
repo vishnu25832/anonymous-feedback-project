@@ -8,24 +8,28 @@ export default function CreateLink() {
 
     const [username, setUsername] = useState("");
     const [link, setLink] = useState("");
-    const [copied, setCopied] = useState(false);   // ✅ must be inside component
+    const [copied, setCopied] = useState(false);
 
     const navigate = useNavigate();
 
     const createLink = async () => {
 
-        const data = await api.post("/create", { username });
+        try {
+            const data = await api.post("/create", { username });
 
-        const generatedLink =
-            "http://localhost:3000/feedback/" + data.linkId;
+            // ✅ PRODUCTION SAFE URL
+            const generatedLink =
+                window.location.origin + "/feedback/" + data.linkId;
 
-        setLink(generatedLink);
+            setLink(generatedLink);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const copyLink = () => {
         navigator.clipboard.writeText(link);
         setCopied(true);
-
         setTimeout(() => setCopied(false), 2000);
     };
 
@@ -55,7 +59,9 @@ export default function CreateLink() {
                 {link && (
                     <>
                         <p>{link}</p>
+
                         <button onClick={copyLink}>Copy Link</button>
+
                         <button onClick={() =>
                             navigate("/dashboard/" + link.split("/").pop())
                         }>
@@ -73,4 +79,5 @@ export default function CreateLink() {
         </div>
     );
 }
+
 
