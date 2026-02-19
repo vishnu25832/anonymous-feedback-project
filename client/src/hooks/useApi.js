@@ -3,6 +3,14 @@ const BASE_URL =
 
 export const useApi = () => {
 
+    const handleResponse = async (res) => {
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || "API Error");
+        }
+        return res.json();
+    };
+
     const post = async (url, body) => {
         const res = await fetch(BASE_URL + url, {
             method: "POST",
@@ -12,22 +20,24 @@ export const useApi = () => {
             body: JSON.stringify(body)
         });
 
-        return res.json();
+        return handleResponse(res);
     };
 
     const get = async (url) => {
         const res = await fetch(BASE_URL + url);
-        return res.json();
+        return handleResponse(res);
     };
 
     const del = async (url) => {
         const res = await fetch(BASE_URL + url, {
             method: "DELETE"
         });
-        return res.json();
+
+        return handleResponse(res);
     };
 
     return { post, get, del };
 };
+
 
 
